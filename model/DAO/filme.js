@@ -17,30 +17,11 @@ const livros = require('./modulo/livros.js')
 //Função para inserir um filme no BD
 const insertLivro = async function(dadosFilme){
     try {
+        let id = livros.livros[0].books.length + 1
+        dadosFilme.id = id
+        livros.livros[0].books.push(dadosFilme)
+        return true;
  
-        let sql;
-
-          
-            sql = `insert into tbl_livro (  title,
-                                            subtitle,
-                                            image,
-                                            price
-                ) values (
-                                                '${dadosFilme.title}',
-                                                '${dadosFilme.subtitle}',
-                                                '${dadosFilme.image}',
-                                                '${dadosFilme.price}'
-                )`;
-       
-        //$executeRawUnsafe() - serve para executar scripts sem retorno de dados 
-            //(insert, update e dele)
-        //$queryRawUnsafe() - serve para executar scripts com retorno de dados (select)
-        let result = await prisma.$executeRawUnsafe(sql);
-
-        if(result)
-            return true;
-        else
-            return false;
 
     } catch (error) {
         return false;    
@@ -51,21 +32,18 @@ const insertLivro = async function(dadosFilme){
 const updateLivro = async function(dadosFilme){
     try {
  
-        let sql;
-
-          
-            sql = `update tbl_livro set     title       = '${dadosFilme.title}',
-                                            subtitle    = '${dadosFilme.subtitle}',
-                                            image       = '${dadosFilme.image}',
-                                            price       = '${dadosFilme.price}'
-                    where id = ${dadosFilme.id}`;
-
-        let result = await prisma.$executeRawUnsafe(sql);
-
-        if(result)
+        let result = await selectByIdLivro(dadosFilme.id)
+        
+        if(result.length > 0){
+            let indice = livros.livros[0].books.findIndex(item => item.id == dadosFilme.id);
+            livros.livros[0].books[indice].title = dadosFilme.title
+            livros.livros[0].books[indice].subtitle = dadosFilme.subtitle
+            livros.livros[0].books[indice].image = dadosFilme.image
+            livros.livros[0].books[indice].price = dadosFilme.price
             return true;
-        else
+        }else
             return false;
+
 
     } catch (error) {
         return false;    
@@ -77,12 +55,13 @@ const updateLivro = async function(dadosFilme){
 const deleteLivro = async function(id){
     try {
  
-            let sql = `delete from tbl_livro where id = ${id}`;
-            let result = await prisma.$executeRawUnsafe(sql);
-
-        if(result)
+        let result = await selectByIdLivro(id)
+ 
+        if(result.length > 0){
+            let indice = livros.livros[0].books.findIndex(item => item.id == id);
+            livros.livros[0].books.splice(indice,1)
             return true;
-        else
+        }else
             return false;
 
     } catch (error) {
@@ -95,7 +74,7 @@ const selectAllLivros = async function(){
     try {
 
         if(livros.livros.length > 0 )   
-            return livros.livros
+            return livros.livros[0].books
         else
             return false
     }catch (error) {
@@ -125,7 +104,7 @@ const selectByIdLivro = async function(id){
             return false
 
     } catch (error) {
-        return false;
+         return false;
     }
     
     

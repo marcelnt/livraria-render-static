@@ -98,7 +98,7 @@ app.post('/v2/livraria/livro', cors(), bodyParserJSON, async function(request, r
     response.json(resultDadosNovoFilme);
 });
 
-app.put('/v2/livraria/atualizar/livro/:id', cors(), bodyParserJSON, async function(request, response){
+app.put('/v2/livraria/livro/:id', cors(), bodyParserJSON, async function(request, response){
 
     //Recebe o content-type com o tipo de dados encaminhado na requisição
     let contentType = request.headers['content-type'];

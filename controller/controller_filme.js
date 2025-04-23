@@ -91,7 +91,7 @@ const setAtualizarLivro = async function(dadosFilme, idFilme, contentType){
 
                 //Encaminha os dados do Filme para o DAO inserir no BD
                 let novoFilme = await filmeDAO.updateLivro(dadosFilme);
-
+           
                 //Validação para verificar se o DAO inseriu os dados do BD
                 if(novoFilme){
                    
@@ -108,7 +108,7 @@ const setAtualizarLivro = async function(dadosFilme, idFilme, contentType){
 
                     return novoFilmeJSON; //200
                 }else{
-                    return message.ERROR_INTERNAL_SERVER_DB; //500
+                    return message.ERROR_NOT_FOUND; //500
                 }
   
             }
@@ -116,7 +116,7 @@ const setAtualizarLivro = async function(dadosFilme, idFilme, contentType){
             return message.ERROR_CONTENT_TYPE; // 415
         }
     }catch(error){
-        return message.ERROR_INTERNAL_SERVER; //500 erro na controller
+        return message.ERROR_NOT_FOUND; //500 erro na controller
     }
 }
 
@@ -128,15 +128,23 @@ const setExcluirLivro = async function(idFilme){
                 return message.ERROR_INVALID_ID; //400
             }else{
        
-                //Encaminha os dados do Filme para o DAO inserir no BD
-                let novoFilme = await filmeDAO.deleteLivro(idFilme);
+                let resultFilme = await getBuscarLivro(idFilme)
 
-                //Validação para verificar se o DAO inseriu os dados do BD
-                if(novoFilme){
-                    return message.SUCCESS_DELETED_ITEM; //200
+                if (resultFilme.status_code == 200){
+
+                    //Encaminha os dados do Filme para o DAO inserir no BD
+                    let novoFilme = await filmeDAO.deleteLivro(idFilme);
+                    //Validação para verificar se o DAO inseriu os dados do BD
+                    if(novoFilme){
+                        return message.SUCCESS_DELETED_ITEM; //200
+                    }else{
+                        return message.ERROR_INTERNAL_SERVER_DB; //500
+                    }
                 }else{
-                    return message.ERROR_INTERNAL_SERVER_DB; //500
+                    return message.ERROR_NOT_FOUND //404
                 }
+
+                
   
             }
        
@@ -187,10 +195,9 @@ const getBuscarLivro = async function(id){
 
         //Encaminha o ID para o DAO buscar no Banco de dados
         let dadosFilme = await filmeDAO.selectByIdLivro(idFilme);
-
         //Verifica se o DAO retornou dados
-        if(dadosFilme){
-
+        if(dadosFilme != false){
+            // console.log(dadosFilme)
             //Validação para verificar a quantidade de itens retornados
             if(dadosFilme.length > 0){
                 //Cria o JSON para retorno
@@ -206,7 +213,7 @@ const getBuscarLivro = async function(id){
                 return message.ERROR_NOT_FOUND; //404
             }
         }else{
-            return message.ERROR_INTERNAL_SERVER_DB; //500
+            return message.ERROR_NOT_FOUND; //500
         }
     }
 }
