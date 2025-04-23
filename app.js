@@ -55,7 +55,7 @@ const bodyParserJSON = bodyParser.json();
 
 //EndPoint: Versão 2.0 - retorna todos os filmes do Banco de Dados
           //Período de funcionamento: 02/2024
-app.get('/v2/livraria/livros', cors(), async function(request, response){
+app.get('/v2/livraria/livro', cors(), async function(request, response){
 
     //chama a função da controller para retornar os filmes
     let dadosFilmes = await controllerFilmes.getListarLivros();
