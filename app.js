@@ -115,7 +115,7 @@ app.put('/v2/livraria/livro/:id', cors(), bodyParserJSON, async function(request
     response.json(resultDadosNovoFilme);
 });
 
-app.delete('/v2/livraria/excluir/livro/:id', cors(), async function(request, response){
+app.delete('/v2/livraria/livro/:id', cors(), async function(request, response){
 
     let idFilme = request.params.id
 
